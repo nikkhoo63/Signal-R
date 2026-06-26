@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Dashboard</title>
+</head>
+
+<body>
+
+<h2>Admin Dashboard</h2>
+
+<!-- لیست سفارش‌ها -->
+<ul id="orders"></ul>
+
+<!-- SignalR Client Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<script>
+
+    // ----------------------------------------
+    // 1. ساخت connection به SignalR Hub
+    // ----------------------------------------
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:5000/orderHub")
+        .withAutomaticReconnect()
+        .build();
+
+    // ----------------------------------------
+    // 2. دریافت پیام از سرور
+    // ----------------------------------------
+    connection.on("NewOrder", function (order) {
+
+        // order = { Product, CreatedAt }
+
+        const li = document.createElement("li");
+
+        li.innerText =
+            order.product ??
+            order.Product +
+            " - " +
+            order.createdAt ??
+            order.CreatedAt;
+
+        document.getElementById("orders").appendChild(li);
+    });
+
+    // ----------------------------------------
+    // 3. اتصال به سرور
+    // ----------------------------------------
+    async function start() {
+        try {
+            await connection.start();
+            console.log("Connected to OrderHub");
+        }
+        catch (err) {
+            console.log("Retrying connection...");
+            setTimeout(start, 2000);
+        }
+    }
+
+    start();
+
+</script>
+
+</body>
+</html>
