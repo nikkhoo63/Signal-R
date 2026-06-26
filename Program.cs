@@ -9,8 +9,22 @@ builder.Services.AddSignalR();
 // Application Service
 builder.Services.AddScoped<OrderService>();
 
+// CORS - Allow all origins for development
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .SetIsOriginAllowed(_ => true);
+    });
+});
+
 var app = builder.Build();
 
+app.UseCors();
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Hub endpoint

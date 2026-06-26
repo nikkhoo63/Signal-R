@@ -20,7 +20,7 @@
     // 1. ساخت connection به SignalR Hub
     // ----------------------------------------
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:5000/orderHub")
+        .withUrl("/orderHub")
         .withAutomaticReconnect()
         .build();
 
